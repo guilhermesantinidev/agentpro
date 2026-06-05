@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentPro 🤖 | Seu Assistente com IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <!-- Ambient blob -->
+  <div class="blob2"></div>
+
+  <div class="app-wrapper">
+    <div class="app-container">
+
+      <!-- ── Main Content ── -->
+      <main class="main-content">
+
+        <header class="main-header">
+          <div class="header-text">
+            <h2>Bem-vindo de volta 👋</h2>
+            <p>Organize sua rotina com inteligência artificial.</p>
+          </div>
+          <div class="header-stats">
+            <div class="stat-pill">
+              <span class="dot dot-violet"></span>
+              <span id="statTaskCount">0 tarefas</span>
+            </div>
+            <div class="stat-pill">
+              <span class="dot dot-cyan"></span>
+              <span>IA Ativa</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="dashboard-grid">
+
+          <!-- Agenda -->
+          <section class="agenda-section">
+            <div class="section-header">
+              <h3><i data-lucide="calendar-check"></i> <span id="agendaTitle">Agenda</span></h3>
+              <span class="task-count-badge" id="taskBadge">0</span>
+            </div>
+            <div class="agenda-tabs">
+              <button class="agenda-tab active" data-filter="today">Hoje</button>
+              <button class="agenda-tab" data-filter="tomorrow">Amanhã</button>
+              <button class="agenda-tab" data-filter="week">7 dias</button>
+              <button class="agenda-tab" data-filter="all">Tudo</button>
+            </div>
+            <div id="taskList" class="task-list"></div>
+          </section>
+
+          <!-- Chat -->
+          <section class="chat-section">
+            <div class="section-header">
+              <h3><i data-lucide="message-square-text"></i> Agente IA</h3>
+            </div>
+            <div id="chatBox" class="chat-box">
+              <div class="message system">
+                <i data-lucide="bot"></i>
+                <span>AgentPro pronto. Configure sua API e comece a conversar.</span>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" id="chatInput" placeholder="Pergunte algo ou use o microfone…">
+              <button class="btn-mic" id="micBtn" title="Falar com o agente">
+                <i data-lucide="mic"></i>
+              </button>
+              <button class="btn-chat" id="sendBtn">
+                <i data-lucide="send-horizontal"></i>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar">
+
+        <!-- Brand -->
+        <div class="brand">
+          <div class="brand-icon-wrap">
+            <i data-lucide="bot"></i>
+          </div>
+          <div>
+            <h1>Agent<span>Pro</span></h1>
+            <div class="brand-version">v2.0 · AI Assistant</div>
+          </div>
+        </div>
+
+        <!-- Config section -->
+        <div class="sidebar-section">
+          <div class="section-title">
+            <i data-lucide="settings-2"></i> Configurações
+          </div>
+
+          <div class="config-item">
+            <label>Chave API Groq</label>
+            <div id="apiInputBlock">
+              <div class="input-with-icon">
+                <i data-lucide="key-round"></i>
+                <input type="password" id="apiKey" placeholder="gsk_...">
+              </div>
+              <button class="btn-primary" id="saveApiBtn">
+                <i data-lucide="save"></i> Salvar chave
+              </button>
+            </div>
+            <div id="apiSavedBlock" style="display:none;">
+              <span><i data-lucide="check-circle"></i> API configurada</span>
+              <button id="changeApiBtn">Alterar</button>
+            </div>
+          </div>
+
+          <div class="config-item">
+            <label>Personalidade</label>
+            <!-- Custom dropdown replacing native select -->
+            <div class="custom-select-wrapper" id="personalityWrapper">
+              <button class="custom-select-trigger" id="personalityTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span class="custom-select-icon"><i data-lucide="heart"></i></span>
+                <span class="custom-select-label" id="personalityLabel">Coach Épico 🔥</span>
+                <span class="custom-select-arrow"><i data-lucide="chevron-down"></i></span>
+              </button>
+              <ul class="custom-select-dropdown" id="personalityDropdown" role="listbox">
+                <li class="custom-select-option selected" data-value="motivacional" role="option">
+                  <span class="option-emoji">🔥</span>
+                  <span class="option-text">Coach Épico</span>
+                  <span class="option-check"><i data-lucide="check"></i></span>
+                </li>
+                <li class="custom-select-option" data-value="sarcastico" role="option">
+                  <span class="option-emoji">😼</span>
+                  <span class="option-text">Realista Ácido</span>
+                  <span class="option-check"><i data-lucide="check"></i></span>
+                </li>
+                <li class="custom-select-option" data-value="militar" role="option">
+                  <span class="option-emoji">⚔️</span>
+                  <span class="option-text">Comando Tático</span>
+                  <span class="option-check"><i data-lucide="check"></i></span>
+                </li>
+                <li class="custom-select-option" data-value="gentil" role="option">
+                  <span class="option-emoji">🌸</span>
+                  <span class="option-text">Zênite da Paz</span>
+                  <span class="option-check"><i data-lucide="check"></i></span>
+                </li>
+              </ul>
+            </div>
+            <!-- Hidden real select for JS compatibility -->
+            <select id="personality" style="display:none;">
+              <option value="motivacional">Coach Épico 🔥</option>
+              <option value="sarcastico">Realista Ácido 😼</option>
+              <option value="militar">Comando Tático ⚔️</option>
+              <option value="gentil">Zênite da Paz 🌸</option>
+            </select>
+          </div>
+
+          <div class="config-item">
+            <label>Aparência</label>
+            <button id="themeToggle">
+              <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+              <span id="themeLabel">Modo Claro</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- New task section -->
+        <div class="sidebar-section" style="flex:1;">
+          <div class="section-title">
+            <i data-lucide="plus-circle"></i> Nova Tarefa
+          </div>
+          <div class="task-form">
+            <div class="input-with-icon">
+              <i data-lucide="pencil-line"></i>
+              <input type="text" id="taskTitle" placeholder="Ex: Reunião do Projeto">
+            </div>
+            <div class="task-form-row">
+              <div class="input-with-icon">
+                <i data-lucide="calendar"></i>
+                <input type="date" id="taskDate">
+              </div>
+              <div class="input-with-icon">
+                <i data-lucide="clock"></i>
+                <input type="time" id="taskTime">
+              </div>
+            </div>
+            <button class="btn-primary" id="addTaskBtn">
+              <i data-lucide="plus"></i> Adicionar à agenda
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </div>
+
+  <!-- ── FAB (mobile) ── -->
+  <button class="fab" id="fabBtn" title="Nova tarefa">
+    <i data-lucide="plus"></i>
+  </button>
+
+  <!-- ── FAB Quick-Add Modal ── -->
+  <div class="fab-modal-overlay" id="fabOverlay">
+    <div class="fab-modal" id="fabModal">
+      <div class="fab-modal-header">
+        <span><i data-lucide="plus-circle"></i> Nova Tarefa</span>
+        <button class="fab-modal-close" id="fabClose"><i data-lucide="x"></i></button>
+      </div>
+      <div class="task-form">
+        <div class="input-with-icon">
+          <i data-lucide="pencil-line"></i>
+          <input type="text" id="fabTaskTitle" placeholder="Ex: Reunião do Projeto">
+        </div>
+        <div class="task-form-row">
+          <div class="input-with-icon">
+            <i data-lucide="calendar"></i>
+            <input type="date" id="fabTaskDate">
+          </div>
+          <div class="input-with-icon">
+            <i data-lucide="clock"></i>
+            <input type="time" id="fabTaskTime">
+          </div>
+        </div>
+        <button class="btn-primary" id="fabAddBtn">
+          <i data-lucide="plus"></i> Adicionar à agenda
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Edit Task Modal ── -->
+  <div class="edit-modal-overlay" id="editOverlay">
+    <div class="edit-modal" id="editModal">
+      <div class="edit-modal-header">
+        <span><i data-lucide="pencil"></i> Editar Tarefa</span>
+        <button class="edit-modal-close" id="editClose"><i data-lucide="x"></i></button>
+      </div>
+      <div class="task-form">
+        <div class="input-with-icon">
+          <i data-lucide="pencil-line"></i>
+          <input type="text" id="editTaskTitle" placeholder="Título da tarefa">
+        </div>
+        <div class="task-form-row">
+          <div class="input-with-icon">
+            <i data-lucide="calendar"></i>
+            <input type="date" id="editTaskDate">
+          </div>
+          <div class="input-with-icon">
+            <i data-lucide="clock"></i>
+            <input type="time" id="editTaskTime">
+          </div>
+        </div>
+        <button class="btn-primary" id="editSaveBtn">
+          <i data-lucide="save"></i> Salvar alterações
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Confetti Canvas ── -->
+  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+
+  <script src="app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
