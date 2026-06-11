@@ -3,86 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgentPro 🤖 | Seu Assistente com IA</title>
+  <title>AgentPro | Seu Assistente com IA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AgentPro">
+  <meta name="theme-color" content="#6C63FF">
+  <meta name="description" content="Assistente pessoal com IA para organizar sua agenda por texto ou por voz.">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/8943/8943377.png">
 </head>
 <body>
 
-  <!-- Ambient blob -->
-  <div class="blob2"></div>
+  <!-- Sidebar backdrop (mobile) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <div class="app-wrapper">
     <div class="app-container">
 
-      <!-- ── Main Content ── -->
-      <main class="main-content">
-
-        <header class="main-header">
-          <div class="header-text">
-            <h2>Bem-vindo de volta 👋</h2>
-            <p>Organize sua rotina com inteligência artificial.</p>
-          </div>
-          <div class="header-stats">
-            <div class="stat-pill">
-              <span class="dot dot-violet"></span>
-              <span id="statTaskCount">0 tarefas</span>
-            </div>
-            <div class="stat-pill">
-              <span class="dot dot-cyan"></span>
-              <span>IA Ativa</span>
-            </div>
-          </div>
-        </header>
-
-        <div class="dashboard-grid">
-
-          <!-- Agenda -->
-          <section class="agenda-section">
-            <div class="section-header">
-              <h3><i data-lucide="calendar-check"></i> <span id="agendaTitle">Agenda</span></h3>
-              <span class="task-count-badge" id="taskBadge">0</span>
-            </div>
-            <div class="agenda-tabs">
-              <button class="agenda-tab active" data-filter="today">Hoje</button>
-              <button class="agenda-tab" data-filter="tomorrow">Amanhã</button>
-              <button class="agenda-tab" data-filter="week">7 dias</button>
-              <button class="agenda-tab" data-filter="all">Tudo</button>
-            </div>
-            <div id="taskList" class="task-list"></div>
-          </section>
-
-          <!-- Chat -->
-          <section class="chat-section">
-            <div class="section-header">
-              <h3><i data-lucide="message-square-text"></i> Agente IA</h3>
-            </div>
-            <div id="chatBox" class="chat-box">
-              <div class="message system">
-                <i data-lucide="bot"></i>
-                <span>AgentPro pronto. Configure sua API e comece a conversar.</span>
-              </div>
-            </div>
-            <div class="chat-input-area">
-              <input type="text" id="chatInput" placeholder="Pergunte algo ou use o microfone…">
-              <button class="btn-mic" id="micBtn" title="Falar com o agente">
-                <i data-lucide="mic"></i>
-              </button>
-              <button class="btn-chat" id="sendBtn">
-                <i data-lucide="send-horizontal"></i>
-              </button>
-            </div>
-          </section>
-
-        </div>
-      </main>
-
       <!-- ── Sidebar ── -->
-      <aside class="sidebar">
+      <aside class="sidebar" id="mainSidebar">
 
         <!-- Brand -->
         <div class="brand">
@@ -91,7 +36,7 @@
           </div>
           <div>
             <h1>Agent<span>Pro</span></h1>
-            <div class="brand-version">v2.0 · AI Assistant</div>
+            <div class="brand-version">v3.2 · AI Assistant</div>
           </div>
         </div>
 
@@ -101,26 +46,42 @@
             <i data-lucide="settings-2"></i> Configurações
           </div>
 
-          <div class="config-item">
+          <div class="config-item" id="apiKeySection">
             <label>Chave API Groq</label>
+            <div id="apiSavedBlock" style="display:none;">
+              <span><i data-lucide="check-circle"></i> Chave salva</span>
+              <button id="changeApiBtn">Alterar</button>
+            </div>
             <div id="apiInputBlock">
               <div class="input-with-icon">
                 <i data-lucide="key-round"></i>
-                <input type="password" id="apiKey" placeholder="gsk_...">
+                <input type="password" id="apiKeyInput" placeholder="gsk_…" autocomplete="off">
               </div>
-              <button class="btn-primary" id="saveApiBtn">
+              <button class="btn-primary" id="saveApiBtn" style="margin-top:8px;">
                 <i data-lucide="save"></i> Salvar chave
               </button>
             </div>
-            <div id="apiSavedBlock" style="display:none;">
-              <span><i data-lucide="check-circle"></i> API configurada</span>
-              <button id="changeApiBtn">Alterar</button>
+          </div>
+
+          <div class="config-item">
+            <label>Como quer ser chamado</label>
+            <div id="nicknameSavedBlock" style="display:none;">
+              <span><i data-lucide="user-check"></i> <span id="nicknameSavedLabel"></span></span>
+              <button id="changeNicknameBtn">Alterar</button>
+            </div>
+            <div id="nicknameInputBlock">
+              <div class="input-with-icon">
+                <i data-lucide="user-round"></i>
+                <input type="text" id="userNickname" placeholder="Ex: João, Chefe…" maxlength="30" autocomplete="off">
+              </div>
+              <button class="btn-primary" id="saveNicknameBtn" style="margin-top:8px;">
+                <i data-lucide="check"></i> Confirmar nome
+              </button>
             </div>
           </div>
 
           <div class="config-item">
             <label>Personalidade</label>
-            <!-- Custom dropdown replacing native select -->
             <div class="custom-select-wrapper" id="personalityWrapper">
               <button class="custom-select-trigger" id="personalityTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
                 <span class="custom-select-icon"><i data-lucide="heart"></i></span>
@@ -150,13 +111,17 @@
                 </li>
               </ul>
             </div>
-            <!-- Hidden real select for JS compatibility -->
             <select id="personality" style="display:none;">
               <option value="motivacional">Coach Épico 🔥</option>
               <option value="sarcastico">Realista Ácido 😼</option>
               <option value="militar">Comando Tático ⚔️</option>
               <option value="gentil">Zênite da Paz 🌸</option>
             </select>
+          </div>
+
+          <div class="config-item">
+            <label>Modelo de IA</label>
+            <div id="modelSelectorWrap" class="model-selector-wrap"></div>
           </div>
 
           <div class="config-item">
@@ -168,6 +133,34 @@
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
               <span id="themeLabel">Modo Claro</span>
+            </button>
+          </div>
+
+          <div class="config-item">
+            <label>Cor de destaque</label>
+            <div class="accent-picker-wrap">
+              <div class="accent-swatches" id="accentSwatches">
+                <button class="accent-swatch" data-color="#6C63FF" style="background:#6C63FF" title="Índigo (padrão)"></button>
+                <button class="accent-swatch" data-color="#f97316" style="background:#f97316" title="Laranja"></button>
+                <button class="accent-swatch" data-color="#22d3ee" style="background:#22d3ee" title="Ciano"></button>
+                <button class="accent-swatch" data-color="#4ade80" style="background:#4ade80" title="Verde"></button>
+                <button class="accent-swatch" data-color="#f472b6" style="background:#f472b6" title="Rosa"></button>
+                <button class="accent-swatch" data-color="#f43f5e" style="background:#f43f5e" title="Vermelho"></button>
+                <button class="accent-swatch" data-color="#facc15" style="background:#facc15" title="Amarelo"></button>
+                <label class="accent-swatch accent-custom" title="Cor personalizada">
+                  <i data-lucide="pipette"></i>
+                  <input type="color" id="accentColorPicker" tabindex="-1">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-item">
+            <label>Notificações</label>
+            <button id="notifToggleBtn" class="notif-toggle-btn">
+              <i data-lucide="bell"></i>
+              <span id="notifToggleLabel">Ativar lembretes</span>
+              <span class="notif-status-dot" id="notifStatusDot"></span>
             </button>
           </div>
         </div>
@@ -182,15 +175,41 @@
               <i data-lucide="pencil-line"></i>
               <input type="text" id="taskTitle" placeholder="Ex: Reunião do Projeto">
             </div>
+            <div class="input-with-icon">
+              <i data-lucide="calendar-clock"></i>
+              <input type="datetime-local" id="taskDatetime">
+            </div>
+            <input type="hidden" id="taskDate">
+            <input type="hidden" id="taskTime">
             <div class="task-form-row">
-              <div class="input-with-icon">
-                <i data-lucide="calendar"></i>
-                <input type="date" id="taskDate">
+              <div class="task-select-wrap">
+                <i data-lucide="tag"></i>
+                <select id="taskCategory">
+                  <option value="outros">📌 Outros</option>
+                  <option value="trabalho">💼 Trabalho</option>
+                  <option value="pessoal">🏠 Pessoal</option>
+                  <option value="saude">❤️ Saúde</option>
+                  <option value="estudos">📚 Estudos</option>
+                </select>
               </div>
-              <div class="input-with-icon">
-                <i data-lucide="clock"></i>
-                <input type="time" id="taskTime">
+              <div class="task-select-wrap">
+                <i data-lucide="flag"></i>
+                <select id="taskPriority">
+                  <option value="normal">🟡 Normal</option>
+                  <option value="urgente">🔴 Urgente</option>
+                  <option value="alta">🟠 Alta</option>
+                  <option value="baixa">🟢 Baixa</option>
+                </select>
               </div>
+            </div>
+            <div class="task-select-wrap">
+              <i data-lucide="repeat"></i>
+              <select id="taskRecurrence">
+                <option value="none">Sem recorrência</option>
+                <option value="daily">🔁 Todo dia</option>
+                <option value="weekly">🔁 Toda semana</option>
+                <option value="monthly">🔁 Todo mês</option>
+              </select>
             </div>
             <button class="btn-primary" id="addTaskBtn">
               <i data-lucide="plus"></i> Adicionar à agenda
@@ -198,10 +217,155 @@
           </div>
         </div>
 
+        <!-- Footer crédito -->
+        <div class="sidebar-footer">
+          <div class="sidebar-footer-credit">
+            <strong>Desenvolvido por</strong>
+            <span>Guilherme Santini</span>
+          </div>
+        </div>
+
       </aside>
+
+      <!-- ── Footer crédito (dentro da sidebar) ── -->
+
+      <!-- ── Main Content ── -->
+      <main class="main-content">
+
+        <!-- ── Mobile Top Bar ── -->
+        <div class="mobile-topbar" id="mobileTopbar">
+          <div class="mobile-topbar-brand">
+            <div class="mobile-topbar-icon">
+              <i data-lucide="bot"></i>
+            </div>
+            <div class="mobile-topbar-name">Agent<span>Pro</span></div>
+          </div>
+          <div class="mobile-topbar-actions">
+            <div class="topbar-stat">
+              <span class="dot dot-violet"></span>
+              <span id="statTaskCountMobile">0</span>
+            </div>
+            <button class="mobile-topbar-btn" onclick="openStatsModal()" title="Stats">
+              <i data-lucide="bar-chart-2"></i>
+            </button>
+            <button class="mobile-topbar-btn" id="menuBtnMobile" title="Configurações">
+              <i data-lucide="settings-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <header class="main-header">
+          <!-- Mobile menu button -->
+          <button class="menu-btn" id="menuBtn" style="display:none; width:38px; height:38px; border-radius:var(--r-sm); border:1px solid var(--border-soft); background:var(--surface-2); color:var(--text-med); cursor:pointer; align-items:center; justify-content:center; flex-shrink:0; transition:all var(--dur-fast);">
+            <i data-lucide="menu" style="width:18px;height:18px;"></i>
+          </button>
+
+          <div class="header-text">
+            <h2>Bem-vindo de volta 👋</h2>
+            <p>Organize sua rotina com inteligência artificial.</p>
+          </div>
+          <div class="header-stats">
+            <div class="stat-pill">
+              <span class="dot dot-violet"></span>
+              <span id="statTaskCount">0 tarefas</span>
+            </div>
+            <div class="stat-pill">
+              <span class="dot dot-cyan"></span>
+              <span>IA Ativa</span>
+            </div>
+            <button class="stat-pill stat-pill-btn" onclick="openStatsModal()" title="Ver estatísticas">
+              <i data-lucide="bar-chart-2"></i>
+              <span>Stats</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="dashboard-grid">
+          <div class="swipe-track" id="swipeTrack">
+
+          <!-- Agenda -->
+          <section class="agenda-section">
+            <div class="section-header">
+              <h3><i data-lucide="calendar-check"></i> <span id="agendaTitle">Agenda</span></h3>
+              <span class="task-count-badge" id="taskBadge">0</span>
+            </div>
+            <div class="agenda-tabs">
+              <button class="agenda-tab active" data-filter="today">Hoje</button>
+              <button class="agenda-tab" data-filter="tomorrow">Amanhã</button>
+              <button class="agenda-tab" data-filter="week">7 dias</button>
+              <button class="agenda-tab" data-filter="all">Tudo</button>
+              <button class="agenda-tab export-btn" id="exportIcsBtn" title="Exportar .ics">
+                <i data-lucide="calendar-arrow-up"></i>
+              </button>
+            </div>
+            <div class="task-search-wrap">
+              <i data-lucide="search"></i>
+              <input type="text" id="taskSearchInput" placeholder="Buscar tarefas…" autocomplete="off">
+            </div>
+            <div class="ptr-wrapper" id="ptrWrapper">
+              <div class="ptr-indicator" id="ptrIndicator">
+                <div class="ptr-icon-wrap">
+                  <i data-lucide="arrow-down" id="ptrArrow"></i>
+                  <svg class="ptr-spinner" id="ptrSpinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="40 20"/>
+                  </svg>
+                </div>
+                <span id="ptrLabel">Puxe para atualizar</span>
+              </div>
+              <div id="taskList" class="task-list"></div>
+            </div>
+          </section>
+
+          <!-- Chat -->
+          <section class="chat-section">
+            <div class="section-header">
+              <h3><i data-lucide="message-square-text"></i> Agente IA</h3>
+              <button id="clearChatBtn" title="Limpar histórico">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+            <div id="chatBox" class="chat-box">
+              <div class="message system">
+                <div class="message-bubble">
+                  <i data-lucide="bot"></i>
+                  <span>AgentPro pronto. Configure sua API e comece a conversar.</span>
+                </div>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" id="chatInput" placeholder="Pergunte algo ou segure o microfone…">
+              <button class="btn-mic" id="micBtn" title="Segure para gravar">
+                <i data-lucide="mic"></i>
+              </button>
+              <button class="btn-chat" id="sendBtn">
+                <i data-lucide="send-horizontal"></i>
+              </button>
+            </div>
+            <div class="mic-hint" id="micHint">🎙️ Segure o microfone para gravar</div>
+          </section>
+
+          </div><!-- /swipe-track -->
+        </div>
+      </main>
 
     </div>
   </div>
+
+  <!-- ── Bottom Nav (mobile) ── -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="nav-item active" data-tab="agenda">
+      <i data-lucide="calendar-check"></i>
+      <span>Agenda</span>
+    </button>
+    <button class="nav-item" data-tab="chat">
+      <i data-lucide="message-square-text"></i>
+      <span>Chat IA</span>
+    </button>
+    <button class="nav-item" data-tab="settings">
+      <i data-lucide="settings-2"></i>
+      <span>Config</span>
+    </button>
+  </nav>
 
   <!-- ── FAB (mobile) ── -->
   <button class="fab" id="fabBtn" title="Nova tarefa">
@@ -211,6 +375,7 @@
   <!-- ── FAB Quick-Add Modal ── -->
   <div class="fab-modal-overlay" id="fabOverlay">
     <div class="fab-modal" id="fabModal">
+      <div class="sheet-drag-area" id="fabDragArea"></div>
       <div class="fab-modal-header">
         <span><i data-lucide="plus-circle"></i> Nova Tarefa</span>
         <button class="fab-modal-close" id="fabClose"><i data-lucide="x"></i></button>
@@ -231,7 +396,7 @@
           </div>
         </div>
         <button class="btn-primary" id="fabAddBtn">
-          <i data-lucide="plus"></i> Adicionar à agenda
+          <i data-lucide="plus"></i> Adicionar
         </button>
       </div>
     </div>
@@ -240,6 +405,7 @@
   <!-- ── Edit Task Modal ── -->
   <div class="edit-modal-overlay" id="editOverlay">
     <div class="edit-modal" id="editModal">
+      <div class="sheet-drag-area" id="editDragArea"></div>
       <div class="edit-modal-header">
         <span><i data-lucide="pencil"></i> Editar Tarefa</span>
         <button class="edit-modal-close" id="editClose"><i data-lucide="x"></i></button>
@@ -266,10 +432,260 @@
     </div>
   </div>
 
-  <!-- ── Confetti Canvas ── -->
-  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+  <!-- Stats Modal gerado dinamicamente pelo app.js → openStatsModal() -->
 
-  <script src="app.js"></script>
-  <script>lucide.createIcons();</script>
+  <!-- ── Confetti Canvas ── -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- ── Keyboard Shortcut Panel ── -->
+  <div id="kbdPanel">
+    <div class="kbd-panel-title">⌨️ Atalhos de teclado</div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Enviar mensagem</span>
+      <span class="kbd-keys"><span class="kbd-key">Enter</span></span>
+    </div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Enviar (global)</span>
+      <span class="kbd-keys"><span class="kbd-key">Ctrl</span><span class="kbd-key">Enter</span></span>
+    </div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Buscar tarefas</span>
+      <span class="kbd-keys"><span class="kbd-key">Ctrl</span><span class="kbd-key">K</span></span>
+    </div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Nova tarefa</span>
+      <span class="kbd-keys"><span class="kbd-key">Ctrl</span><span class="kbd-key">N</span></span>
+    </div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Fechar modal</span>
+      <span class="kbd-keys"><span class="kbd-key">Esc</span></span>
+    </div>
+    <div class="kbd-row">
+      <span class="kbd-desc">Atalhos</span>
+      <span class="kbd-keys"><span class="kbd-key">?</span></span>
+    </div>
+  </div>
+  <button id="kbdToggleBtn" title="Atalhos (?)">?</button>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <i data-lucide="check-circle"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+
+      /* ── Mobile menu ── */
+      const menuBtn   = document.getElementById('menuBtn');
+      const sidebar   = document.getElementById('mainSidebar');
+      const backdrop  = document.getElementById('sidebarBackdrop');
+
+      function isMobile() { return window.innerWidth <= 900; }
+
+      function updateMenuVisibility() {
+        menuBtn.style.display = isMobile() ? 'flex' : 'none';
+      }
+      updateMenuVisibility();
+      window.addEventListener('resize', updateMenuVisibility);
+
+      menuBtn?.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        backdrop.classList.toggle('show');
+      });
+      backdrop?.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('show');
+      });
+
+      // Botão de settings na topbar mobile
+      document.getElementById('menuBtnMobile')?.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        backdrop.classList.toggle('show');
+        if (window.lucide) lucide.createIcons();
+      });
+
+      /* ── Bottom nav tabs + swipe ── */
+      const navItems  = document.querySelectorAll('.nav-item');
+      const agenda    = document.querySelector('.agenda-section');
+      const chat      = document.querySelector('.chat-section');
+      const track     = document.getElementById('swipeTrack');
+      let   activeTab = 'agenda';
+
+      function switchTab(tab, animate) {
+        if (tab === 'settings') {
+          sidebar.classList.add('open');
+          backdrop.classList.add('show');
+          navItems.forEach(b => b.classList.remove('active'));
+          document.querySelector('.nav-item[data-tab="settings"]')?.classList.add('active');
+          return;
+        }
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('show');
+
+        activeTab = tab;
+        navItems.forEach(b => b.classList.remove('active'));
+        document.querySelector(`.nav-item[data-tab="${tab}"]`)?.classList.add('active');
+
+        const fab = document.getElementById('fabBtn');
+
+        if (!isMobile()) {
+          // Desktop: sem slider
+          if (track) { track.style.transform = ''; track.style.width = ''; track.style.transition = ''; }
+          if (agenda) { agenda.style.width = ''; agenda.style.display = ''; }
+          if (chat)   { chat.style.width   = ''; chat.style.display   = ''; }
+          if (fab) fab.style.display = '';
+          return;
+        }
+
+        // Mobile: mover o trilho
+        if (track) {
+          track.style.transform = ''; // limpa qualquer valor inline do swipe
+          track.classList.remove('swiping');
+          if (tab === 'agenda') {
+            track.classList.remove('snap-chat');
+          } else {
+            track.classList.add('snap-chat');
+          }
+        }
+
+        if (fab) fab.style.display = tab === 'agenda' ? 'flex' : 'none';
+      }
+
+      navItems.forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      if (isMobile()) switchTab('agenda', false);
+
+      window.addEventListener('resize', () => {
+        switchTab(activeTab, false);
+      });
+
+      /* ── Swipe gesture ── */
+      if (isMobile() || true) {
+        const grid = document.querySelector('.dashboard-grid');
+        let swipeStartX = 0, swipeStartY = 0;
+        let swipeDeltaX = 0;
+        let isSwiping   = false;
+        let swipeLocked = false; // true = movimento vertical, ignora
+
+        grid?.addEventListener('touchstart', (e) => {
+          if (!isMobile()) return;
+          swipeStartX = e.touches[0].clientX;
+          swipeStartY = e.touches[0].clientY;
+          swipeDeltaX = 0;
+          isSwiping   = false;
+          swipeLocked = false;
+        }, { passive: true });
+
+        grid?.addEventListener('touchmove', (e) => {
+          if (!isMobile() || swipeLocked) return;
+          const dx = e.touches[0].clientX - swipeStartX;
+          const dy = e.touches[0].clientY - swipeStartY;
+
+          // Determina direção dominante na primeira detecção
+          if (!isSwiping && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+            if (Math.abs(dy) > Math.abs(dx)) { swipeLocked = true; return; }
+            isSwiping = true;
+          }
+          if (!isSwiping) return;
+
+          swipeDeltaX = dx;
+          const w     = grid.offsetWidth;
+          const base  = activeTab === 'agenda' ? 0 : -w;
+          let   raw   = base + dx;
+
+          // Resistência nas bordas
+          if (raw > 0)    raw = raw * 0.2;
+          if (raw < -w)   raw = -w + (raw + w) * 0.2;
+
+          if (track) {
+            track.classList.add('swiping');
+            // track tem 200% de largura; posição 0 = agenda, -50% = chat
+            // base em px: agenda=0, chat=-gridWidth
+            track.style.transform = `translateX(${raw}px)`;
+          }
+        }, { passive: true });
+
+        grid?.addEventListener('touchend', () => {
+          if (!isMobile() || !isSwiping) return;
+          isSwiping = false;
+          if (track) track.classList.remove('swiping');
+
+          const THRESHOLD = 80; // px mínimo para trocar de aba
+
+          if (activeTab === 'agenda' && swipeDeltaX < -THRESHOLD) {
+            switchTab('chat');
+          } else if (activeTab === 'chat' && swipeDeltaX > THRESHOLD) {
+            switchTab('agenda');
+          } else {
+            // Snap de volta
+            switchTab(activeTab);
+          }
+          swipeDeltaX = 0;
+        });
+      }
+
+      /* ── Chat clear ── */
+      document.getElementById('clearChatBtn')?.addEventListener('click', () => {
+        if (typeof clearChatHistory === 'function') clearChatHistory();
+      });
+
+      /* ── Stats modal ── delegado ao app.js (openStatsModal) ── */
+
+      /* ── Keyboard shortcuts ── */
+      const kbdBtn   = document.getElementById('kbdToggleBtn');
+      const kbdPanel = document.getElementById('kbdPanel');
+      kbdBtn?.addEventListener('click', () => kbdPanel.classList.toggle('open'));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+          const active = document.activeElement;
+          if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') return;
+          kbdPanel.classList.toggle('open');
+        }
+        if (e.key === 'Escape') {
+          kbdPanel.classList.remove('open');
+          const so = document.getElementById('statsModalOverlay');
+          if (so) so.classList.remove('open');
+        }
+      });
+      document.addEventListener('click', (e) => {
+        if (kbdPanel.classList.contains('open') &&
+            !kbdPanel.contains(e.target) &&
+            e.target !== kbdBtn) {
+          kbdPanel.classList.remove('open');
+        }
+      });
+
+      /* ── Sync mobile task count ── */
+      const statDesktop = document.getElementById('statTaskCount');
+      const statMobile  = document.getElementById('statTaskCountMobile');
+      if (statDesktop && statMobile) {
+        const syncCount = () => {
+          const txt = statDesktop.textContent || '0';
+          statMobile.textContent = txt.replace(' tarefas','').replace(' tarefa','').trim();
+        };
+        syncCount();
+        new MutationObserver(syncCount).observe(statDesktop, { childList: true, characterData: true, subtree: true });
+      }
+      window.showToast = function(msg, type = 'info') {
+        const toast  = document.getElementById('toast');
+        const msgEl  = document.getElementById('toastMsg');
+        const icon   = toast.querySelector('i');
+        if (!toast) return;
+        toast.className = `toast ${type}`;
+        msgEl.textContent = msg;
+        const iconMap = { success:'check-circle', error:'x-circle', info:'info' };
+        icon.setAttribute('data-lucide', iconMap[type] || 'info');
+        if (window.lucide) lucide.createIcons();
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.classList.remove('show'), 3200);
+      };
+    });
+  </script>
 </body>
 </html>
